@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishna's Blessing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        /* General Setup */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Lato', sans-serif;
+            overflow: hidden;
+
+            /* BACKGROUND IMAGE SETTINGS */
+            background: url('https://ci3.googleusercontent.com/meips/ADKq_NbW1DDn-lA0xPWtZfI_MsPKZXiiap7Z_Bnr0aRAJ9Sw5oRme6URADzXt_e6MJP_dj0Wpa9Fs5xuivbpL3ks9SNhVBtN=s0-d-e1-ft#https://c.tenor.com/n2EvY0lY1IwAAAAM/tenor.gif') no-repeat center center fixed; 
+            background-size: cover; /* Ensures image covers the whole screen */
+        }
+
+        /* Dark overlay to make sure the background isn't too bright for the eyes */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Overall tint */
+            z-index: 1;
+        }
+
+        /* The Main Container (The "Glass" Box) */
+        .container {
+            /* SOUTH WEST POSITIONING (No Change) */
+            position: absolute; 
+            bottom: 5%;
+            left: 5%; 
+            
+            /* --- COLOR BLENDING CHANGES: OPACITY INCREASED TO 0.95 --- */
+            /* More opaque dark navy/brown-black */
+            background: rgba(20, 25, 40, 0.95); /* Changed from 0.9 to 0.95 */
+            backdrop-filter: blur(4px); 
+            /* -------------------------------------------------------- */
+            
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); 
+            text-align: center;
+            max-width: 450px; 
+            width: 90%;
+            border: none; 
+            z-index: 10;
+        }
+
+        /* Decorative Peacock Feather colors on top of the box */
+        .border-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px; 
+            background: linear-gradient(90deg, #ffc107, #03a9f4, #ffc107, #1a237e); 
+            border-radius: 12px 12px 0 0;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: #ffeb3b; 
+            margin-bottom: 5px; 
+            font-weight: 700;
+            font-size: 1.8rem;
+            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2); 
+        }
+
+        .subtitle {
+            color: #e0e0e0; 
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Input Area */
+        textarea {
+            width: 100%;
+            height: 80px; 
+            border: 1px solid #444; 
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            /* Input background also slightly more opaque */
+            background: rgba(0, 0, 0, 0.6); /* Changed from 0.5 to 0.6 */
+            transition: 0.3s;
+            margin-bottom: 15px;
+            color: #f5f5f5; 
+        }
+
+        textarea:focus {
+            border-color: #ffc107; 
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        /* The Button */
+        button {
+            background: linear-gradient(45deg, #1a237e, #03a9f4); 
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(3, 169, 244, 0.5);
+        }
+
+        /* The Blessing Response */
+        #blessing-output {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #ffc107; 
+            font-weight: 600;
+            min-height: 50px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            font-family: 'Cinzel', serif;
+            line-height: 1.4;
+        }
+
+        .flute-deco {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #ffeb3b; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="border-top"></div>
+
+        <h1>Seek Krishna's Guidance</h1>
+        <p class="subtitle">"Offer your worries to the wind..."</p>
+
+        <textarea id="user-input" placeholder="Type your prayer or question here..."></textarea>
+        
+        <br>
+        
+        <button onclick="giveBlessing()">Receive Blessing</button>
+
+        <div id="blessing-output"></div>
+        
+        <div class="flute-deco">🪈 🪷 🪈</div>
+    </div>
+
+    <script>
+        // Constants for localStorage management
+        const CONTEXT_KEY = 'krishna_blessing_history';
+        const MAX_HISTORY = 10;
+
+        const blessings = [
+            "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action.",
+            "Change is the law of the universe. Accept it gracefully.",
+            "The soul is never born and never dies.",
+            "Perform your duty with an equipoised mind, abandoning all attachment to success or failure.",
+            "I am the beginning, middle, and end of creation.",
+            "Fear not. What is real cannot be threatened.",
+            "Calmness, gentleness, silence, and purity: these are the disciplines of the mind.",
+            "Set thy heart upon thy work, but never on its reward.",
+            "I am seated in everyone's heart, and from Me come remembrance, knowledge and forgetfulness."
+        ];
+        
+        // Function to load the history from browser storage
+        function loadHistory() {
+            const historyJson = localStorage.getItem(CONTEXT_KEY);
+            return historyJson ? JSON.parse(historyJson) : [];
+        }
+
+        // Function to save the history to browser storage, ensuring it's capped at 10
+        function saveHistory(history) {
+            const clippedHistory = history.slice(-MAX_HISTORY);
+            localStorage.setItem(CONTEXT_KEY, JSON.stringify(clippedHistory));
+        }
+
+        function giveBlessing() {
+            const inputField = document.getElementById('user-input');
+            const outputDiv = document.getElementById('blessing-output');
+            const userInput = inputField.value.trim();
+            
+            if(userInput === "") {
+                outputDiv.style.opacity = "1";
+                outputDiv.innerHTML = "Speak your heart first, my dear.";
+                outputDiv.style.color = "#aaa";
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * blessings.length);
+            const selectedBlessing = blessings[randomIndex];
+
+            // 1. Load existing history
+            let history = loadHistory();
+            
+            // 2. Add the current interaction to the history
+            const newInteraction = {
+                user: userInput,
+                response: selectedBlessing,
+                timestamp: new Date().toISOString()
+            };
+            history.push(newInteraction);
+            
+            // 3. Save the updated history (capped at MAX_HISTORY=10)
+            saveHistory(history);
+
+            // Display logic remains the same
+            outputDiv.style.opacity = "0";
+            inputField.value = ''; // Clear the input field after submitting
+            
+            setTimeout(() => {
+                outputDiv.innerHTML = `"${selectedBlessing}"`;
+                outputDiv.style.color = "#ffc107"; 
+                outputDiv.style.opacity = "1";
+            }, 300);
+        }
+    </script>
+</body>
+</html>
